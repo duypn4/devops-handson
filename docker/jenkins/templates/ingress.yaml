@@ -1,0 +1,19 @@
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   annotations:
+#           nginx.ingress.kubernetes.io/rewrite-target: /
+#   name: jenkins-ingress
+#   namespace: {{ .Values.namespace }}
+# spec:
+#   ingressClassName: nginx
+#   rules:
+#   - http:
+#       paths:
+#       - backend:
+#           service:
+#             name: apache
+#             port:
+#               number: 80
+#         path: /jenkins
+#         pathType: Exact

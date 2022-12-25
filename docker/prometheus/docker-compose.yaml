@@ -1,0 +1,50 @@
+version: '3.7'
+
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+    - 9090:9090
+    volumes:
+    - ./config/prometheus:/etc/prometheus
+    - pmtdata:/prometheus
+    command:
+    - --config.file=/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+    - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
+    ports:
+    - 3000:3000
+    volumes:
+    - ./config/grafana:/etc/grafana
+    - gfndata:/var/lib/grafana
+
+  zig-dummy-get-result-service:
+    image: zig-dummy-get-result-service
+    container_name: zig-dummy-get-result-service
+    restart: unless-stopped
+    # ports:
+    # - 80:80
+    build:
+      context: ../../repos/zig-dummy-get-result-service
+
+  zig-dummy-main-backend:
+    image: zig-dummy-main-backend
+    container_name: zig-dummy-main-backend
+    restart: unless-stopped
+    # ports:
+    # - 80:80
+    build:
+      context: ../../repos/zig-dummy-main-backend
+
+volumes:
+  pmtdata:
+    driver: local
+  gfndata:
+    driver: local
