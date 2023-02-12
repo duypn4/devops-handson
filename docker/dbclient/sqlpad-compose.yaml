@@ -1,0 +1,29 @@
+version: '3'
+services:
+  sqlpad:
+    # To use Dockerfile at root of this project, use build instead of image
+    # build: ../../
+    image: sqlpad/sqlpad:5
+    hostname: 'sqlpad'
+    ports:
+      - '80:3000'
+    environment:
+      SQLPAD_ADMIN: 'onefms@fsoft.com.vn'
+      SQLPAD_ADMIN_PASSWORD: 'admin'
+      SQLPAD_APP_LOG_LEVEL: debug
+      SQLPAD_WEB_LOG_LEVEL: warn
+      SQLPAD_SEED_DATA_PATH: /etc/sqlpad/seed-data
+      SQLPAD_CONNECTIONS__pgdemo__name: OneFMS-Aurora
+      SQLPAD_CONNECTIONS__pgdemo__driver: postgres
+      SQLPAD_CONNECTIONS__pgdemo__host: onefmsdb.cluster-cqwhlnqscl5i.ap-southeast-1.rds.amazonaws.com
+      SQLPAD_CONNECTIONS__pgdemo__database: onefmsdb
+      SQLPAD_CONNECTIONS__pgdemo__username: onefmsdbadmin
+      SQLPAD_CONNECTIONS__pgdemo__password: xpwvYH2xl0jW3Rdr
+      SQLPAD_CONNECTIONS__pgdemo__multiStatementTransactionEnabled: 'true'
+      SQLPAD_CONNECTIONS__pgdemo__idleTimeoutSeconds: 86400
+    volumes:
+      - spdata:/etc/sqlpad/seed-data
+
+volumes:
+  spdata:
+    driver: local
