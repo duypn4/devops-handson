@@ -1,0 +1,104 @@
+{
+    "pipeline": {
+        "name": "one-fms-int-sit-fmsportal",
+        "roleArn": "arn:aws:iam::350155334257:role/service-role/AWSCodePipelineServiceRole-ap-southeast-1-one-fms-int-sit-fmspo",
+        "artifactStore": {
+            "type": "S3",
+            "location": "codepipeline-ap-southeast-1-855975781570",
+            "encryptionKey": {
+                "id": "arn:aws:kms:ap-southeast-1:350155334257:alias/s3-artifact-kms",
+                "type": "KMS"
+            }
+        },
+        "stages": [
+            {
+                "name": "Source",
+                "actions": [
+                    {
+                        "name": "Source",
+                        "actionTypeId": {
+                            "category": "Source",
+                            "owner": "AWS",
+                            "provider": "CodeStarSourceConnection",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "BranchName": "develop",
+                            "ConnectionArn": "arn:aws:codestar-connections:ap-southeast-1:350155334257:connection/b42fc54f-1fb9-48a0-9ba3-a906d09780f2",
+                            "FullRepositoryId": "cdgtaxi/fmsportal",
+                            "OutputArtifactFormat": "CODE_ZIP"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            }
+                        ],
+                        "inputArtifacts": [],
+                        "region": "ap-southeast-1",
+                        "namespace": "SourceVariables"
+                    }
+                ]
+            },
+            {
+                "name": "Build",
+                "actions": [
+                    {
+                        "name": "Build",
+                        "actionTypeId": {
+                            "category": "Build",
+                            "owner": "AWS",
+                            "provider": "CodeBuild",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "ProjectName": "one-fms-int-sit-fmsportal"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "BuildArtifact"
+                            }
+                        ],
+                        "inputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            }
+                        ],
+                        "region": "ap-southeast-1",
+                        "namespace": "BuildVariables"
+                    }
+                ]
+            },
+            {
+                "name": "Deploy",
+                "actions": [
+                    {
+                        "name": "Deploy",
+                        "actionTypeId": {
+                            "category": "Deploy",
+                            "owner": "AWS",
+                            "provider": "S3",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "BucketName": "one-fms-web",
+                            "Extract": "true"
+                        },
+                        "outputArtifacts": [],
+                        "inputArtifacts": [
+                            {
+                                "name": "BuildArtifact"
+                            }
+                        ],
+                        "roleArn": "arn:aws:iam::847773763831:role/one-fms-int-fmsportal-codepipeline",
+                        "region": "ap-southeast-1",
+                        "namespace": "DeployVariables"
+                    }
+                ]
+            }
+        ],
+        "version": 1
+    }
+}
