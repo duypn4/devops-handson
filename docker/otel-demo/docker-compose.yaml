@@ -1,0 +1,40 @@
+version: '3.7'
+services:
+  vote-svc:
+    build:
+      context: ./vote-svc
+    image: vote-svc
+    container_name: vote-svc
+    restart: always
+    depends_on:
+    - redis
+
+  backend-svc:
+    build:
+      context: ./backend-svc
+    image: backend-svc
+    container_name: backend-svc
+    restart: always
+    ports:
+    - 8080:80
+    depends_on:
+    - redis
+    - vote-svc
+
+  frontend-svc:
+    build:
+      context: ./frontend-svc
+    image: frontend-svc
+    container_name: frontend-svc
+    restart: always
+    ports:
+    - 80:80
+    depends_on:
+    - backend-svc
+
+  redis:
+    image: redis:7.2.1
+    container_name: redis
+    restart: always
+    ports:
+    - 6379:6379
