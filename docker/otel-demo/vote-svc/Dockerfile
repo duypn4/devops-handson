@@ -1,12 +1,10 @@
 FROM node
 
-WORKDIR /dog/app
+WORKDIR /vote/app
 
-COPY package*.json .
+COPY . .
 
 RUN npm install
-
-COPY *.js .
 
 EXPOSE 80
 

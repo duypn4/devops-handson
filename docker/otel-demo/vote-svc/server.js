@@ -1,5 +1,6 @@
 const express = require("express");
 const redis = require("redis");
+const { trace } = require("@opentelemetry/api");
 
 const PORT = 80;
 const HOST = "0.0.0.0";
@@ -8,6 +9,7 @@ const REDIS_CAT_KEY = "Cat";
 const REDIS_DOG_KEY = "Dog";
 
 // setup middleware
+const tracer = trace.getTracer("vote-svc", "0.1.0");
 const redisClient = redis.createClient({
     url: REDIS_URL
 });
@@ -21,17 +23,20 @@ redisClient.on("error", (err) => {
 });
 
 const updateVote = async (keyName) => {
-    let votes = 0;
+    return tracer.startActiveSpan(`update${keyName}`, async (span) => {
+        let votes = 0;
 
-    let oldVotes = await redisClient.get(keyName);
-    if (oldVotes) {
-        votes = parseInt(oldVotes) + 1;
-    } else {
-        votes++;
-    }
-    await redisClient.set(keyName, votes);
+        let oldVotes = await redisClient.get(keyName);
+        if (oldVotes) {
+            votes = parseInt(oldVotes) + 1;
+        } else {
+            votes++;
+        }
+        await redisClient.set(keyName, votes);
+        span.end();
 
-    return votes;
+        return votes;
+    });
 }
 
 // setup server
@@ -42,9 +47,12 @@ app.get("/", (req, res) => {
 });
 
 app.get("/catvote", async (req, res) => {
-    let votes = await updateVote(REDIS_CAT_KEY);
-    console.log(`Cat got ${votes} votes`);
-    res.status(200).send("ok");
+    tracer.startActiveSpan("/catvote", async (parentSpan) => {
+        let votes = await updateVote(REDIS_CAT_KEY);
+        console.log(`Cat got ${votes} votes`);
+        res.status(200).send("ok");
+        parentSpan.end();
+    });
 });
 
 app.get("/dogvote", async (req, res) => {
@@ -61,4 +69,4 @@ function startServer() {
 
 module.exports = {
     startServer
-}
+};
