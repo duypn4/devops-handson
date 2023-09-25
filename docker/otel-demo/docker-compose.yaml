@@ -5,7 +5,8 @@ services:
       context: ./vote-svc
     image: vote-svc
     container_name: vote-svc
-    restart: always
+    ports:
+    - 8080:80
     depends_on:
     - redis
 
@@ -14,9 +15,8 @@ services:
       context: ./backend-svc
     image: backend-svc
     container_name: backend-svc
-    restart: always
-    ports:
-    - 8080:80
+    # ports:
+    # - 8080:80
     depends_on:
     - redis
     - vote-svc
@@ -26,7 +26,6 @@ services:
       context: ./frontend-svc
     image: frontend-svc
     container_name: frontend-svc
-    restart: always
     ports:
     - 80:80
     depends_on:
@@ -35,22 +34,30 @@ services:
   redis:
     image: redis:7.2.1
     container_name: redis
-    restart: always
     ports:
     - 6379:6379
 
+  collector:
+    image: otel/opentelemetry-collector-contrib
+    container_name: collector
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+    # ports:
+      # - 13133:13133 # healthcheck extension
+      # - 4317:4317 # otlp gRPC receiver
+      # - 4318:4318 # otlp http receiver
+    depends_on:
+    - jaeger
+
   jaeger:
-    image: jaegertracing/all-in-one:1.18
+    platform: linux/amd64
+    image: jaegertracing/all-in-one:1.49
     container_name: jaeger
     restart: always
     environment:
     - COLLECTOR_ZIPKIN_HTTP_PORT=9411
     ports:
-    - "5775:5775/udp"
-    - "6831:6831/udp"
-    - "6832:6832/udp"
-    - 5778:5778
-    - 16686:16686
-    - 14268:14268
-    - 14250:14250
-    - 9411:9411
+    # - 14269:14269 # healthcheck
+    # - 4317:4317 # otlp gRPC receiver
+    # - 4318:4318 # otlp http receiver
+    - 16686:16686 # serve frontend
