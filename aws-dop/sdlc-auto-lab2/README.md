@@ -1,4 +1,4 @@
-This lab is to use a secret from Secret Manager with Lambda functions:
+# This lab is to use a secret from Secret Manager with Lambda functions:
 1. Create a Lambda function
    - upload `code1.py`
    - Add AWS secrets to code

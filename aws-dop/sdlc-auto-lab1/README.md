@@ -1,4 +1,4 @@
-This lab is to create a S3 bucket to store artifacts for CodeBuild:
+# This lab is to create a S3 bucket to store artifacts for CodeBuild:
 1. Create a S3 source bucket
 2. Zip `app` folder and upload to the source bucket
 3. Create a S3 artifact bucket

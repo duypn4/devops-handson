@@ -1,4 +1,4 @@
-This lab is to deploy a WordPress app using CodeDeploy:
+# This lab is to deploy a WordPress app using CodeDeploy:
 1. Launch an EC2 instance:
    - Image: amazon linux 2
    - Security group: open ssh, http

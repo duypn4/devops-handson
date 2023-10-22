@@ -1,4 +1,4 @@
-This lab is to use System Manager to install Apache server:
+# This lab is to use System Manager to install Apache server:
 1. Launch 2 instances with same tag
 2. Create resource group in Resource Groups
    - Group type: tag based
