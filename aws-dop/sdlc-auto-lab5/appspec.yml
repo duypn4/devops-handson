@@ -1,0 +1,12 @@
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: "<your task definition arn>"
+        LoadBalancerInfo:
+          ContainerName: "sample-app"
+          ContainerPort: 80
+
+# Hooks:
+#   - AfterAllowTestTraffic: "<your lambda function arn>"
